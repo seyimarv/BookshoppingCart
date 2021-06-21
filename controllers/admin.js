@@ -19,17 +19,15 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-
-  const product = new Product(title, price, description, imageUrl, null, req.user._id) // use the Product class to create a new product instance and run the .save method
+  const product = new Product({title: title, price: price, description: description, imageUrl: imageUrl, userId: req.user}) // use the Product class to create a new product instance and run the .save method
   product.save().then(result => {
     console.log(result)
     res.redirect('/admin/products')
   }).catch(err => {
     console.log(err)
   })
+} // the save method here is from mongoose
 
-
-}
 exports.getEditProduct = (req, res, next) => {
   const editMode =  req.query.edit;
   if(!editMode) {
@@ -57,30 +55,36 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
-  const product = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, prodId)
-    product.save().then(result => {
+  // const product = new Product({title: updatedTitle, imageUrl: updatedImageUrl, price: updatedPrice, description: updatedDescription, })
+  Product.findById(prodId).then(product => {
+    product.title = updatedTitle;
+    product.price = updatedPrice;
+    product.imageUrl = updatedImageUrl,
+    product.description = updatedDescription
+   return product.save()
+  })
+.then(result => {
     console.log('UPDATED PRODUCT')
     res.redirect('/admin/products')
   }).catch(err => console.log(err))
  
-
-}
+}  // the save method here is from mongoose
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId
-
-  Product.deleteById(prodId).then(result => {
+  Product.findByIdAndRemove(prodId).then(result => {
     console.log("PRODUCT DESTROYED")
     res.redirect('/admin/products')
   }).catch(err => {
     console.log(err)
   })
- 
-}
+} // findByIdAndRemove() is a built in method in mongoose allowing you to remove a document
 
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll().then(products => {
+  Product.find()
+  // .populate("userId")
+  .then(products => {
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin products',
@@ -90,4 +94,5 @@ exports.getProducts = (req, res, next) => {
     console.log(err)
   })
 
-};
+}; //find() from mongoose. in mongoose there is a populate() method that you can add after find that tellls mongoose to populate a certain field using the id
+// select() can be added after find to get a specific part of the data e.g when you want only the price or name, not the description

@@ -1,0 +1,8 @@
+mongoose helps abstract some complexity from mongoDb.
+what is mongoose? mongoose is a ODM(object Document Mappinng Library), mongoose allows us to deine models with which we work.
+and takes away the burden of queries. 
+Core concepts:
+    1. Schema and models: define how our data looks like.
+    2. instances: enstantiate our models
+    3. we can the run queries with various helpers
+mongoosejs.com for the docs. 

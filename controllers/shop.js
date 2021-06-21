@@ -1,8 +1,10 @@
 const Product = require('../models/product');
 
+const Order = require("../models/order")
+
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll().then(products => {
+  Product.find().then(products => {
     res.render('shop/product-list', {
       prods: products,
       pageTitle: 'All products',
@@ -11,8 +13,7 @@ exports.getProducts = (req, res, next) => {
   }).catch(err => {
     console.log(err)
   })
-
-};
+}; // find() here from mongoose. Read official docs
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
@@ -24,20 +25,11 @@ exports.getProduct = (req, res, next) => {
     })
   }).catch(err => {
     console.log(err)
-  }) // findByPk is a sequelize functionality that allows you to find individual elements by their id
-
-  // Product.findAll({ where: { id: prodId } }).then(products => {
-  //   res.render('shop/product-detail', {
-  //     pageTitle: products[0].title,
-  //     product: products[0],
-  //     path: '/products'
-  //   })
-  // })    // you can all use the findall method to get individual product by using 'where'
-
-}
+  }) 
+} // findByid is from mongoose
 
 exports.getIndex = (req, res, next) => {
-  Product.fetchAll().then(products => {
+  Product.find().then(products => {
     res.render('shop/index', {
       prods: products,
       pageTitle: 'Shop',
@@ -47,10 +39,11 @@ exports.getIndex = (req, res, next) => {
     console.log(err)
   })
 
-};
+};  // find() here from mongoose. Read official docs
 
 exports.getCart = (req, res, next) => {
-  req.user.getCart().then(products => {
+  req.user.populate('cart.items.productId').execPopulate().then(user => {
+   const products = user.cart.items;
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
@@ -58,7 +51,8 @@ exports.getCart = (req, res, next) => {
       });
     }).catch(err => {
       console.log(err)
-    })
+    }) 
+    // in mongoose there is a populate() method that you can add after find that tellls mongoose to populate a certain field using the id
   // Cart.getCart(cart => {
   //   Product.fetchAll().then(([rows, fieldData]) => {
   //     const cartProducts = []
@@ -84,35 +78,6 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  // let fetchedCart;
-  // let newQuantity = 1;
-  // // Product.findById(prodId, product => {
-  // //   Cart.addProduct(prodId, product.price);
-  // // });
-  // req.user.getCart().then(cart => {
-  //     fetchedCart = cart;
-  //    return cart.getProducts({where: {id: prodId}});
-  // }).then(products => {
-  //   let product 
-  //   if (products.length > 0) {
-  //     product = products[0]
-  //   }
-  
-  //   if(product) {
-  //       const oldQuantity = product.CartItem.Quantity // GET FORMER QUANTITY IF ITEM ALREADY EXIST IN CART
-  //       newQuantity = oldQuantity + 1
-  //       return product;
-  //   }
-  //   return Product.findByPk(prodId) // magic method added by sequelize.
-
-  // }).then(product => {
-  //   return fetchedCart.addProduct(product, {
-  //     through: {Quantity: newQuantity}
-      
-  //   }) // magic method added by sequelize.
-  // }).then(result => {
-  //   res.redirect('/cart')
-  // }).catch(err => console.log(err))
   Product.findById(prodId).then(product => {
     return req.user.addToCart(product)
   }).then(result => {
@@ -147,17 +112,28 @@ exports.postCartDeleteProduct = (req, res, next) => {
 }
 
 exports.getOrders = (req, res, next) => {
-  // check meaninin of include. here the relation between orders and Products allows you to instruct sequelize to fetch the products related to each Order
-  req.user.getOrders().then(orders => {
-    res.render('shop/orders', {
-      path: '/orders',
-      pageTitle: 'Your Orders',
-      orders: orders
-    });
-  }).catch(err => {
-    console.log(err)
+
+Order.find({'user.userId': req.user._id}).then(orders => {
+  const reducer = (accumulator, currentValue) => accumulator + currentValue;
+  let productQuantity = []
+  const getQuantity = () => orders.map(order => {
+    order.products.map(product => {
+      console.log(product.quantity)
+      productQuantity.push(product.quantity)
+    })
   })
- 
+  getQuantity()
+  res.render('shop/orders', {
+    path: '/orders',
+    pageTitle: 'Your Orders',
+    orders: orders,
+    total: productQuantity.reduce(reducer) //get the total quantity of the products that is ordered
+  });
+}).catch(err => {
+  console.log(err)
+})
+
+
 };
 
 exports.postOrder = (req, res, next) => {
@@ -174,11 +150,26 @@ exports.postOrder = (req, res, next) => {
   // .then(result => {
   //   res.redirect("/orders")
   // })
- req.user.addOrder().then(result => {
-    res.redirect('/orders')
- }).catch(err => {
-   console.log(err)
- })
+  req.user.populate('cart.items.productId').execPopulate().then(user => {
+
+    const products = user.cart.items.map(i => {
+      return {quantity: i.quantity, product:{ ...i.productId._doc}};
+    });
+
+    const order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user.id
+        
+      },
+      products: products,
+    })
+   return order.save()
+   }).then(result => {
+     return req.user.clearCart()
+   }).then(result => {
+    res.redirect("/orders")
+   }).catch(err => console.log(err))
 }
 
 exports.getCheckout = (req, res, next) => {
