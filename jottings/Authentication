@@ -1,0 +1,38 @@
+Authentication:
+need to seperete anonymous users with users who have been authenticated/signed up.
+
+
+Implementation:
+a user sends a login request(for signed up users), the server checks if the users exists. then a session is created for the user.
+then a success response 200 is sent back.
+
+
+Encrpt password: 
+dont store in plain text. install a package npm install bcryptjs 
+
+
+routes protection:
+users shouldnt be able to access certain routes if they are not authenticated.
+You can use a middleware
+
+
+Crsf Attacks:
+Cross-site-request-forgery.
+an attack that can trick users to exist mallicious codes. A session can be stolen. you have to protetc against this.
+to protect, make sure people only use your session if they are working with your views. to ensure use a crsf Token.
+needed to be added to ensure your sessions dont get stolen
+
+to add install npm install --save csurf. generates a token that protects
+
+error messages:
+you can install connect-flash to get access to this.
+
+
+AUTHENTICATION:
+means not every visitor of your page can view and interact with everything. Authentication has to happen on the server-side and builds up on sessions
+You can protect routes by checking the (session-controlled) login status right before you access a controller action.
+
+Security and UX:
+passwords should be stored in a hashed Form. 
+Csrf attacks are a real issue and you should therefore include CSRF protection in any application you build
+For a better user experience, you can flash data/message into the session which you can display in your views.

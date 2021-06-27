@@ -3,14 +3,14 @@ const Product = require('../models/product');
 
 
 exports.getAddProduct = (req, res, next) => {
-
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
     formsCSS: true,
     productCSS: true,
-    activeAddProduct: true
+    activeAddProduct: true,
+    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -29,6 +29,9 @@ exports.postAddProduct = (req, res, next) => {
 } // the save method here is from mongoose
 
 exports.getEditProduct = (req, res, next) => {
+  if(!req.session.isLoggedIn) {
+    return res.redirect('/login')
+  } //if users is not loggedin users cant access edit products
   const editMode =  req.query.edit;
   if(!editMode) {
    return res.redirect('/')
@@ -42,7 +45,8 @@ exports.getEditProduct = (req, res, next) => {
        pageTitle: 'Edit Product',
        path: '/admin/edit-product',
        editing: editMode,
-       product: product
+       product: product,
+       isAuthenticated: req.session.isLoggedIn
      });
   }).catch(err => {
     console.log(err)
@@ -57,22 +61,24 @@ exports.postEditProduct = (req, res, next) => {
   const updatedDescription = req.body.description;
   // const product = new Product({title: updatedTitle, imageUrl: updatedImageUrl, price: updatedPrice, description: updatedDescription, })
   Product.findById(prodId).then(product => {
+    if(product.userId.toString() !== req.user._id.toString()) {
+      return res.redirect('/');
+    } //only users that created the products can delete  them
     product.title = updatedTitle;
     product.price = updatedPrice;
     product.imageUrl = updatedImageUrl,
     product.description = updatedDescription
-   return product.save()
-  })
-.then(result => {
+   return product.save().then(result => {
     console.log('UPDATED PRODUCT')
     res.redirect('/admin/products')
+  })
   }).catch(err => console.log(err))
- 
+
 }  // the save method here is from mongoose
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId
-  Product.findByIdAndRemove(prodId).then(result => {
+  Product.deleteOne({_id: prodId, userId: req.user._id}).then(result => {
     console.log("PRODUCT DESTROYED")
     res.redirect('/admin/products')
   }).catch(err => {
@@ -82,13 +88,14 @@ exports.postDeleteProduct = (req, res, next) => {
 
 
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.find({userId: req.user._id}) //only the user who created the products have access to get it as admin products
   // .populate("userId")
   .then(products => {
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin products',
-      path: '/admin/products'
+      path: '/admin/products',
+      isAuthenticated: req.session.isLoggedIn
     });
   }).catch(err => {
     console.log(err)

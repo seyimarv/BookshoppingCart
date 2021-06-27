@@ -1,0 +1,14 @@
+cookies:
+great for storing data on client, bit not for sensitive data so it isnt manipulated
+
+cookies can be configured to expire when the browser is closed i.e session cookie or when a certain age is reached i.e permanent cookie
+
+Works well together with Sessions
+
+Sessions: 
+stored on the server, not on the client
+Great for  storing sensitive data that should survive across requests
+You can Store Anything in Sessions
+often used for Storing user Data/authentication status
+identified via cookie
+you can use differernt storages for saving your sessions on the server.

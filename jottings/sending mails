@@ -1,0 +1,6 @@
+nodejs is not capable of creating a mailing server. it is a complex task.
+you use third party providers e.g AWS, SENDGRID.
+
+
+
+npm install --save nodemailer nodemailer-sendgrid-transport

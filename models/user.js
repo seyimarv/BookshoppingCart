@@ -6,14 +6,16 @@ const Product = require('../models/product');
 const Schema = mongoose.Schema;
 
 const userSchema =  new Schema({
-    name: {
-        type: String,
-        required: true
-    },
     email: {
         type: String,
         requied: true
     },
+    password: {
+        type: String,
+        required: true
+    },
+    resetToken: String, //needed to reset password in case user forget password
+    resetTokenExpiration: Date,
     cart: {
         items: [{productId: {type: Schema.Types.ObjectId, ref: 'Product', required: true},
          quantity: {type:Number, required: true}}], // meaning an array of documents

@@ -8,7 +8,8 @@ exports.getProducts = (req, res, next) => {
     res.render('shop/product-list', {
       prods: products,
       pageTitle: 'All products',
-      path: '/products'
+      path: '/products',    
+      isAuthenticated: req.session.isLoggedIn
     });
   }).catch(err => {
     console.log(err)
@@ -21,7 +22,8 @@ exports.getProduct = (req, res, next) => {
     res.render('shop/product-detail',{
       pageTitle: product.title,
       product: product,
-      path: '/products'
+      path: '/products',
+      isAuthenticated: req.session.isLoggedIn
     })
   }).catch(err => {
     console.log(err)
@@ -29,11 +31,12 @@ exports.getProduct = (req, res, next) => {
 } // findByid is from mongoose
 
 exports.getIndex = (req, res, next) => {
+  console.log(req.user)
   Product.find().then(products => {
     res.render('shop/index', {
       prods: products,
       pageTitle: 'Shop',
-      path: '/'
+      path: '/',
     });
   }).catch(err => {
     console.log(err)
@@ -47,7 +50,8 @@ exports.getCart = (req, res, next) => {
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
-        products: products
+        products: products,
+        isAuthenticated: req.session.isLoggedIn
       });
     }).catch(err => {
       console.log(err)
@@ -91,7 +95,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId
-  req.user.deleteProductFromCart(prodId).then(result => {
+req.user.deleteProductFromCart(prodId).then(result => {
     console.log(result)
     res.redirect('/cart')
   }).catch(err => {
@@ -113,7 +117,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
 
-Order.find({'user.userId': req.user._id}).then(orders => {
+Order.find({'user.userId': req.session.user._id}).then(orders => {
   const reducer = (accumulator, currentValue) => accumulator + currentValue;
   let productQuantity = []
   const getQuantity = () => orders.map(order => {
@@ -127,7 +131,8 @@ Order.find({'user.userId': req.user._id}).then(orders => {
     path: '/orders',
     pageTitle: 'Your Orders',
     orders: orders,
-    total: productQuantity.reduce(reducer) //get the total quantity of the products that is ordered
+    total: productQuantity.length !== 0 ? productQuantity.reduce(reducer) : null, //get the total quantity of the products that is ordered
+    isAuthenticated: req.session.isLoggedIn
   });
 }).catch(err => {
   console.log(err)
@@ -158,7 +163,7 @@ exports.postOrder = (req, res, next) => {
 
     const order = new Order({
         user: {
-          name: req.user.name,
+          email: req.user.email,
           userId: req.user.id
         
       },

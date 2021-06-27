@@ -1,0 +1,2 @@
+Why should we use validation?
+a validationis a controllerr/middleware to chcek formdata such as validate an email before ut gets stored in the database

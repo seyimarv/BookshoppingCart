@@ -1,4 +1,5 @@
 <%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/cart.css">
 </head>
 
 <body>
@@ -12,6 +13,7 @@
                        <h1><%= p.productId.title%></h1> 
                         <h2>Quantity: <%= p.quantity %></h2>
                          <form action="/cart-delete-item" method="POST">
+                            <input type="hidden" name="_csrf" value="<%=csrfToken %>">
                             <input type="hidden" name="productId" id="" value="<%= p.productId._id %>">
                             <input type="hidden" name="productPrice" id="" value="<%= p.price %>">
                            <button class="btn" type="submit">
@@ -25,6 +27,7 @@
             </ul>
             <div >
                 <form action="/create-order" method="POST">
+                    <input type="hidden" name="_csrf" value="<%=csrfToken %>">
                     <button class="btn" type="submit">
                         Order now!
                     </button>

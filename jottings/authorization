@@ -1,0 +1,2 @@
+Authorization:
+meaning that not every authenticated user would be able to do everything. Permisons are restricted to lockdown access. 

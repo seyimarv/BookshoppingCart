@@ -5,4 +5,24 @@ Core concepts:
     1. Schema and models: define how our data looks like.
     2. instances: enstantiate our models
     3. we can the run queries with various helpers
-mongoosejs.com for the docs. 
+mongoosejs.com for the docs.
+
+
+Sessions and Cookies:
+A cookie is used for data in the frontend. they are stored on the client side. 
+
+Cookies allows ypu to share data in the browser which is specific to a user.
+Session cookies expire when the browser is closed.
+
+for tracking data cookies are good. 
+
+Sessions
+Sessions are stored in the client-side. allows store some information(like user authenticated) in the backend instead of the frontend.
+Session are stored on the server-side. use a session to store data that belongs to a user that should not be lost withe every response you send
+
+
+to use. install express-session
+
+
+
+for production.. you can use differernt database to store Sessions.  use mongoDb by using npm install by using npm install --save connect-mongoDb-session
