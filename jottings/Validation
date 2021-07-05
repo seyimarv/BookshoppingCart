@@ -1,2 +1,13 @@
 Why should we use validation?
-a validationis a controllerr/middleware to chcek formdata such as validate an email before ut gets stored in the database
+a validationis a controllerr/middleware to chcek formdata such as validate an email before it gets stored in the database. The input can either be rejcted or allowed.
+
+How to validate:
+we can validte on the clinet side. i.e using javascript(optional). Not very secure solution, only useful for user experience.
+we can validate on the server side(more secure as code cant be seen by the user its only on the server.).
+
+there is a built-in validation on some database like mongoDb.
+
+To use validation, there is a third party package you can use. (express-validator). use npm install  --save express-validator
+
+you can also write your own custom validation.
+

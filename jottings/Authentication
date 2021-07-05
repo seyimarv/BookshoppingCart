@@ -19,7 +19,7 @@ You can use a middleware
 Crsf Attacks:
 Cross-site-request-forgery.
 an attack that can trick users to exist mallicious codes. A session can be stolen. you have to protetc against this.
-to protect, make sure people only use your session if they are working with your views. to ensure use a crsf Token.
+to protect, make sure people only use your session if they are working with your views. to ensure, use a crsf Token.
 needed to be added to ensure your sessions dont get stolen
 
 to add install npm install --save csurf. generates a token that protects

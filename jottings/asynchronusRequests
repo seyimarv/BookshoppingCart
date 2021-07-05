@@ -1,0 +1,3 @@
+Async Requests 
+some part of the application built doenst return an html page as a response. (somethings happen behind the scenes).
+You send request(which contains certain datain form JSON), sent to a server. the server then returns a data in JSON format without reloading/resending an html page.

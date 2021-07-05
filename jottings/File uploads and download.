@@ -1,0 +1,15 @@
+File upload and download is an important part of application.
+
+Adding a file Picker to the frontend.: a tool you can use to accept a file on the operating system, by settin type of input to file.
+urlEncoded data is text data.
+to parse data that can handle file data, add multer. by npm install --save multer. parses incoming data for text/ file.  you can add an attribute to the form to indicate
+that it accepts diferent kind of data(file and text).(by setting enctype to multipart/formdata).
+
+Files should not be stored in the database, they are too big to be stored and queried from there. they should be stored on the file system.
+
+To serve files:
+for public images(available to everyone), serve the images folder in a static way.
+To create a pdf you can use PDFkit.(very prominent. use npm install --save pdfkit).
+
+
+Deleting files: you can delete a file using the fileSystem.(check file.js)

@@ -1,0 +1,38 @@
+You cant avoid errors. there are different types: 
+Technical/network errors e.g server down.
+Bugs/logical errors i.e errors in our code. e.g user object used when it doesnt exist., fixed during development. its is our fault
+Expected errors e.g database operation fails, inform user, possibly retry
+
+
+
+Working with errors:
+-You can throw an error: there are tools we can usee.g try,catch block for synchronous, and then and catch for asynchronous.
+ we can directing handle the error or we can use a special express middleware.
+
+No error is thrown:
+we have to validate values to throw an error or directly handle the error.
+
+
+To handle errors in your application you can add a page represnting 500 error(indicating an error in the database) or other Technical issues.
+
+
+There is a special error handling middleware in express js which takes in four arguements.
+
+in async code you have to use next wrapping the error.
+
+
+HTTP STATUS CODE:
+The codes are extra information passed to the data, that tells the browser if an action suceeded or not. theya are of different types;
+200; success
+300; redirection
+400; client-side error.
+500; server-side error.
+
+setting status codes does not mean that the response is incomplete or the app crashed.
+
+Types of errors and handling Errors:
+You can differntiate between different type of errors - Technical errors(which are thrown) and "Expected errors" (e.g invalid user input).
+Error handling can be done with custom if-checks, try-catch, then()-catch().
+You can use the express error handling middleware to handle alll unhandled errors.
+
+
